@@ -38,8 +38,8 @@ class PybbProfile(models.Model):
                                 default=settings.LANGUAGE_CODE)
     show_signatures = models.BooleanField(_('Show signatures'), blank=True, default=True)
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
-    avatar = get_image_field_class()(_('Avatar'), blank=True, null=True,
-                                     upload_to=util.FilePathGenerator(to='pybb/avatar'))
+    # avatar = get_image_field_class()(_('Avatar'), blank=True, null=True,
+                                     # upload_to=util.FilePathGenerator(to='pybb/avatar'))
     autosubscribe = models.BooleanField(_('Automatically subscribe'),
                                         help_text=_('Automatically subscribe to topics that you answer'),
                                         default=defaults.PYBB_DEFAULT_AUTOSUBSCRIBE)
@@ -47,6 +47,10 @@ class PybbProfile(models.Model):
     def save(self, *args, **kwargs):
         self.signature_html = util._get_markup_formatter()(self.signature)
         super(PybbProfile, self).save(*args, **kwargs)
+
+    @property
+    def avatar(self):
+        return self.user.user_image
 
     @property
     def avatar_url(self):

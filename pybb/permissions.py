@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from django.db.models import Q
 
 from pybb import defaults, util
+from pybb.models import Topic, PollAnswerUser
 
 
 class DefaultPermissionHandler(object):
@@ -93,8 +94,8 @@ class DefaultPermissionHandler(object):
     def may_vote_in_topic(self, user, topic):
         """ return True if `user` may unstick `topic` """
         return (
-            user.is_authenticated() and topic.poll_type != topic.POLL_TYPE_NONE and not topic.closed and
-            not user.poll_answers.filter(poll_answer__topic=topic).exists()
+            user.is_authenticated() and topic.poll_type != Topic.POLL_TYPE_NONE and not topic.closed and
+            not PollAnswerUser.objects.filter(poll_answer__topic=topic, user=user).exists()
         )
 
     def may_create_post(self, user, topic):
@@ -114,10 +115,6 @@ class DefaultPermissionHandler(object):
     def may_post_as_admin(self, user):
         """ return True if `user` may post as admin """
         return user.is_staff
-
-    def may_subscribe_topic(self, user, forum):
-        """ return True if `user` is allowed to subscribe to a `topic` """
-        return not defaults.PYBB_DISABLE_SUBSCRIPTIONS
 
     #
     # permission checks on posts
@@ -176,14 +173,6 @@ class DefaultPermissionHandler(object):
         """
         return True if `user` may attach files to posts, False otherwise.
         By default always True
-        """
-        return True
-
-    def may_edit_topic_slug(self, user):
-        """
-        returns True if `user` may choose topic's slug, False otherwise.
-        When True adds field slug in the Topic form.
-        By default always False
         """
         return False
 

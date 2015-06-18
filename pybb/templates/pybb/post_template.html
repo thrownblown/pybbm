@@ -16,7 +16,7 @@
     </thead>
     <tbody>
     <tr class="post-row">
-        <td class="post-info">
+        <td class="post-info" style="width:120px;">
             {% include "pybb/avatar.html" with user=post.user %}
 
             <div class="post-author">
@@ -56,31 +56,34 @@
 
             </div>
         </td>
-        <td class="post-content">
-            {{ post.body_html|safe }}
+        <td class="post-content" style="position:relative;">
+            <div class="post-body" style="top:0;padding-bottom:15px;">
+                {{ post.body_html|safe }}
 
-            {% if not user.is_authenticated or user_profile.show_signatures %}
-                {% if post_user_profile.signature %}
-                    <div class="post-signature">
-                        {{ post_user_profile.signature_html|safe }}
-                    </div>
-                {% endif %}
-            {% endif %}
-            {% if post.updated %}
-                <div class="updated-message">{% trans "Edited" %} {% pybb_time post.updated %}</div>
-            {% endif %}
-
-            {% comment %}
-                    {% if post.attachment_cache %}
-                    {% for attach in post.attachment_cache %}
-                    <br/>
-                    {% trans "Attachment" %}: <a href="{{ attach.get_absolute_url }}">{{ attach.name }}</a> ({{ attach.size_display }})
-                    {% endfor %}
+                {% if not user.is_authenticated or user_profile.show_signatures %}
+                    {% if post_user_profile.signature %}
+                        <div class="post-signature">
+                            {{ post_user_profile.signature_html|safe }}
+                        </div>
                     {% endif %}
-            {% endcomment %}
-            <div class="post-related">
+                {% endif %}
+                {% if post.updated %}
+                    <div class="updated-message">{% trans "Edited" %} {% pybb_time post.updated %}</div>
+                {% endif %}
+
+                {% comment %}
+                        {% if post.attachment_cache %}
+                        {% for attach in post.attachment_cache %}
+                        <br/>
+                        {% trans "Attachment" %}: <a href="{{ attach.get_absolute_url }}">{{ attach.name }}</a> ({{ attach.size_display }})
+                        {% endfor %}
+                        {% endif %}
+                {% endcomment %}
+            </div>
+            <div class="post-related" style="bottom:0;position:absolute;">
                 {% if user|pybb_may_create_post:post.topic %}
                     <a href="{% url 'pybb:add_post' topic.id %}?quote_id={{ post.id }}" class="quote-link">{% trans "quote" %}</a>
+                    //
                     <a href="#" class="quote-selected-link">{% trans "quote selected" %}</a>
                 {% endif %}
                 <div class='attachments'>
